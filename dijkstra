@@ -1,0 +1,69 @@
+import java.util.Scanner;
+import java.util.Arrays;
+
+public class Dijkstra{
+    public int AM[][];
+
+    public Dijkstra(int n){
+        AM = new int[n][n];
+    }
+
+    private int FindUnvis(int[] dist, int[] visited){
+        int unvis = 0, minimum = 999;
+
+        for(int i = 0; i < dist.length; i++){
+            if(visited[i] == 0 && dist[i] < minimum){
+                unvis = i;
+                minimum = dist[i];
+            }
+        }
+        return unvis;
+    }
+
+    public void FindShortestPath(int source, int n){
+        int[] dist = new int[n];
+        int[] visited = new int[n];
+
+        for(int i = 0; i < n; i++){
+            dist[i] = AM[source][i];
+        }
+        Arrays.fill(visited, 0);
+        visited[source] = 1;
+
+        for(int i = 1; i < n; i++){
+            int unvis = FindUnvis(dist, visited);
+            visited[unvis] = 1;
+
+            for(int vertex = 0; vertex < n; vertex++){
+                if(dist[unvis] + AM[unvis][vertex] < dist[vertex]){
+                    dist[vertex] = dist[unvis] + AM[unvis][vertex];
+                }
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            System.out.println(source + " -> " + i + " = " + dist[i]);
+        }
+    }
+
+    public static void main(String[] args){
+        Scanner in = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int n = in.nextInt();
+        Dijkstra D = new Dijkstra(n);
+
+        System.out.println("Enter an adjacency matrix of " + n + "x" + n + ": ");
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                D.AM[i][j] = in.nextInt();
+            }
+        }
+
+        System.out.print("Enter a source vertex: ");
+        int source = in.nextInt();
+
+        D.FindShortestPath(source, n);
+
+    }
+}
