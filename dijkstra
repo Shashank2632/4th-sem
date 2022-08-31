@@ -1,69 +1,86 @@
-import java.util.Scanner;
-import java.util.Arrays;
+import java.util.*;
 
-public class Dijkstra{
-    public int AM[][];
+public class Main 
+{
+    public static void dijj(int n ,int adj[][],int src ,int dist[],int vis[])
+		{
+		    int unvis=0;
+		
+		for(int i=0;i<n;i++)
+		{			unvis= calcmin(unvis,dist,n,vis);
+					vis[unvis]=1;
+			for(int vertex =0;vertex<n;vertex++)
+			{    
+				if (dist[unvis] +adj[unvis][vertex]<dist[vertex])
+				{
+					dist[vertex]= dist[unvis] + adj[unvis][vertex];
+				} 
+			}
+		}
+		System.out.println("Distance from source "+src+ " to ");
 
-    public Dijkstra(int n){
-        AM = new int[n][n];
-    }
+		for(int i=0;i<n;i++)
+		{
+			System.out.print("vertex "+(i+1)+" is "+dist[i]+"\n");
 
-    private int FindUnvis(int[] dist, int[] visited){
-        int unvis = 0, minimum = 999;
-
-        for(int i = 0; i < dist.length; i++){
-            if(visited[i] == 0 && dist[i] < minimum){
-                unvis = i;
-                minimum = dist[i];
-            }
+			
+		
+		}
         }
-        return unvis;
-    }
+	
+	private static int calcmin(int unvis,int dist[],int n,int vis[])
+	{	int min= 999;
+	     int v=0;
+		for(unvis=0;unvis<n;unvis++)
+		{
+		if(vis[unvis]!=1 && dist[unvis]<=min) 
+			{ 
+			min= dist[unvis];
+			v=unvis;
+			}
+		}
+		return v;
+	}
+	public static void main(String[] args)
+	{
+		Scanner sc = new Scanner(System.in);
+		int adj[][] = new int[30][30];
+		int vis[]= new int[30];
+		//int unvis[]= new int[30];
+		int dist[] =new int [30];
+		
+		System.out.println("enter the number of vertices ");
+		int n = sc.nextInt();
+		System.out.println("enter the matrix");
+		for(int i=0;i<n;i++)
+		{
+			for(int j=0;j<n;j++)
+			{
+				adj[i][j]= sc.nextInt();
+			}
+		}
+		
+		System.out.println("the matrix is ");
+		for(int i=0;i<n;i++)
+		{
+			for(int j=0;j<n;j++)
+			{
+				System.out.print(adj[i][j]+" ");		
+			}
+			System.out.println();
+		}
+		
+		System.out.println("Enter source vertex ");
+		int src = sc.nextInt();
+		
+		for(int i=0;i<n;i++)
+		{
+			dist[i]= adj[src][i];
+			vis[i]=0;
+		}
+		vis[src]=1;
+        dijj(n,adj,src,dist,vis);
+		
+	}
 
-    public void FindShortestPath(int source, int n){
-        int[] dist = new int[n];
-        int[] visited = new int[n];
-
-        for(int i = 0; i < n; i++){
-            dist[i] = AM[source][i];
-        }
-        Arrays.fill(visited, 0);
-        visited[source] = 1;
-
-        for(int i = 1; i < n; i++){
-            int unvis = FindUnvis(dist, visited);
-            visited[unvis] = 1;
-
-            for(int vertex = 0; vertex < n; vertex++){
-                if(dist[unvis] + AM[unvis][vertex] < dist[vertex]){
-                    dist[vertex] = dist[unvis] + AM[unvis][vertex];
-                }
-            }
-        }
-
-        for(int i = 0; i < n; i++){
-            System.out.println(source + " -> " + i + " = " + dist[i]);
-        }
-    }
-
-    public static void main(String[] args){
-        Scanner in = new Scanner(System.in);
-
-        System.out.print("Enter the number of vertices: ");
-        int n = in.nextInt();
-        Dijkstra D = new Dijkstra(n);
-
-        System.out.println("Enter an adjacency matrix of " + n + "x" + n + ": ");
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
-                D.AM[i][j] = in.nextInt();
-            }
-        }
-
-        System.out.print("Enter a source vertex: ");
-        int source = in.nextInt();
-
-        D.FindShortestPath(source, n);
-
-    }
 }
