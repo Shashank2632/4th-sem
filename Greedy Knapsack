@@ -1,75 +1,68 @@
-import java.util.Scanner;
-public class Knapsack_G 
+import java.util.*;
+public class Main
 {
-double weight[];
-double benefit[];
-double ratio[];
-double W;
-Knapsack_G() 
+	static int get_next(int n,float ratio[])
 	{
-	Scanner scan = new Scanner(System.in);
-	System.out.println("Enter the number of objects: ");
-	int nItems = scan.nextInt();
-	weight = new double[nItems];
-	benefit = new double[nItems];
-	ratio = new double[nItems];
-	System.out.println("Enter the object's weights");
-	for (int i = 0; i<nItems; ++i) 
-		weight[i] = scan.nextDouble();
-	System.out.println("Enter the object's profits");
-	for (int i = 0; i<nItems; ++i) 
-		benefit[i] = scan.nextDouble();
-	for (int i = 0; i<nItems; ++i) 
-		ratio[i] = benefit[i] / weight[i]; 
-	System.out.println("Enter the Capacity of the knapsack: ");
-	W = scan.nextDouble();
-	}
-int getNext()
-{
-	double highest = 0;
-	int index = -1;
-	for (int i = 0; i<benefit.length; ++i) 
-	{
-		if (ratio[i] >highest) 
+		float lar=-1;
+		int i,index=-1;
+		for(i=0;i<n;i++)
 		{
-			highest = ratio[i];
-			index = i;      
+			if(ratio[i]>lar)
+			{
+				lar=ratio[i];
+				index=i;
+			}
+		}	
+		if(index!=(-1))
+			ratio[index]=-1;
+		return index;		
+	}	
+		
+	static void Fill_knapsack(int n,int c,float pro[],float wei[],float ratio[])
+	{
+		float cw=0,cp=0;
+		while(cw<c)
+		{
+			int item=get_next(n,ratio);
+			//System.out.println("index"+item);
+			if(item==(-1))
+				break;
+			if((cw+wei[item])<=c)
+			{
+				cp=cp+pro[item];
+				cw=cw+wei[item];
+			}
+			else
+			{
+				cp=cp+(((c-cw)/wei[item])*pro[item]);
+				cw=cw+(c-cw)/wei[item];
+				break;
+			}
 		}
-	} 
-	return index;
-}
-void fill()
-{
-	double cW = 0; //current weight
-	double cB = 0; //current benefit 
-	System.out.print("\n Objects  considered: ");
-	while (cW<W) 
+		System.out.println("the total profit is "+cp);
+	}				
+	public static void main(String args[])
 	{
-		int item = getNext();        //next highest ratio
-		if (item == -1) {
-			//No items left
-			break;
-    }
-		System.out.print((item+1)+" ");
-		if (cW + weight[item] <= W)
+		Scanner sc=new Scanner(System.in);
+		int n,c,i;
+		float ratio[]=new float[20];
+		float pro[]=new float[20];
+		float wei[]=new float[20]; 
+		System.out.println("Enter the no of objects");
+		n=sc.nextInt();
+		System.out.println("enter the profit and weights in pair");
+		for(i=0;i<n;i++)
 		{
-			cW += weight[item];
-			cB += benefit[item];
-			//mark as used for the getNext() (ratio) function
-			ratio[item] = 0;
-        }
-		else 
-            {
-			cB += (ratio[item] * (W - cW));
-			cW += (W - cW);
-			break;  //the knapsack is full
-            }
-        }
-		System.out.println("\nThe Optimal Solution i.e. Max Benefit = " + cB );
-    }
-public static void main(String[] args) 
-	{
-		Knapsack_G fk = new Knapsack_G();
-		fk.fill();
+			pro[i]=sc.nextFloat();
+			wei[i]=sc.nextFloat();
+			ratio[i]=pro[i]/wei[i];
+		}
+		System.out.println("the ratio is");
+		for(i=0;i<n;i++)
+			System.out.println(ratio[i]);
+		System.out.println("Enter the capacity");
+		c=sc.nextInt();
+		Fill_knapsack(n,c,pro,wei,ratio);
+		return ;
 	}
 }
